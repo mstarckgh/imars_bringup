@@ -20,7 +20,13 @@ def generate_launch_description():
         parameters=[joy_params],
     )
 
+    controller_interface_node = Node(
+        package='imars_bringup',
+        executable='ControllerInterfaceNode',
+    )
+
     return LaunchDescription([
         joy_node,
-        joy_to_cmd_vel_node
+        joy_to_cmd_vel_node,
+        controller_interface_node,
     ])

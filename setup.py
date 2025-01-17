@@ -15,6 +15,7 @@ setup(
         # Include Custom Folders
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
+        (os.path.join('share', package_name, 'urdf'), glob('urdf/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,7 +26,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'JoyToCmdVelNode = imars_bringup.joy_to_cmd_vel_function:main'
+            'JoyToCmdVelNode = imars_bringup.joy_to_cmd_vel_function:main',
+            'ControllerInterfaceNode = imars_bringup.controller_interface_function:main'
         ],
     },
 )
