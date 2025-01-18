@@ -10,7 +10,7 @@ from smbus2 import SMBus
 
 class I2cInterfaceNode(Node):
     def __init__(self):
-        super.__init__('i2c_interface_node')
+        super().__init__('i2c_interface_node')
 
         # I2C Server Address
         self.i2c_server_address = 0x08
