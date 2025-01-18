@@ -45,6 +45,12 @@ class I2cInterfaceNode(Node):
         self.write_float_to_register(0x00, linear_velocity)
         self.write_float_to_register(0x01, steering_angle)
 
+        # Debugg Abfrage, ob auch alles richtig gesendet wurde
+        debugg_angle = self.read_float_from_register(0x01)
+        debugg_velocity = self.read_float_from_register(0x00)
+        self.get_logger().info(f'Updated Velocity: {linear_velocity:.2f} m/s, Updated Angle: {math.degrees(steering_angle):.2f} degrees')
+
+
 
     def write_float_to_register(self, register:int, value:float)->None:
         float_bytes = list(struct.pack('f', value))
