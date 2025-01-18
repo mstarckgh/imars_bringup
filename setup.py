@@ -27,7 +27,8 @@ setup(
     entry_points={
         'console_scripts': [
             'JoyToCmdVelNode = imars_bringup.joy_to_cmd_vel_function:main',
-            'ControllerInterfaceNode = imars_bringup.controller_interface_function:main'
+            'ControllerInterfaceNode = imars_bringup.controller_interface_function:main',
+            'I2CInterfaceNode = imars_bringup.i2c_interface_function:main',
         ],
     },
 )
