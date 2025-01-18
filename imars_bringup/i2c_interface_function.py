@@ -33,7 +33,7 @@ class I2cInterfaceNode(Node):
         )
 
     def cmd_vel_callback(self, msg):
-        selflinear_velocity = msg.linear.x
+        self.linear_velocity = msg.linear.x
         angular_velocity = msg.angular.z
 
         # Ackermann-Berechnung
