@@ -9,7 +9,7 @@ jtc_node:
     axis_linear:
       x:
         forward: 5
-        backward: 4
+        backward: 2
     scale_linear:
       x: 0.5
     
