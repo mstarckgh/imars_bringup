@@ -18,6 +18,11 @@ class I2cInterfaceNode(Node):
 
         # Parameter des Fahrzeugs
         self.wheelbase = 0.5
+        self.linear_velocity = 0.0
+        self.steering_angle = 0.0
+
+        # Timer zum Senden der Daten an Controller
+        self.timer = self.create_timer(0.1, )
 
         # Abonnieren des /cmd_vel-Themas
         self.subscription = self.create_subscription(
@@ -49,6 +54,20 @@ class I2cInterfaceNode(Node):
         debugg_angle = self.read_float_from_register(0x01)
         debugg_velocity = self.read_float_from_register(0x00)
         self.get_logger().info(f'Updated Velocity: {linear_velocity:.2f} m/s, Updated Angle: {math.degrees(steering_angle):.2f} degrees')
+
+    def send_update(self):
+        # Loggen der berechneten Werte
+        self.get_logger().info(f'Linear Velocity: {self.linear_velocity:.2f} m/s, Steering Angle: {math.degrees(self.steering_angle):.2f} degrees')
+
+        # Daten an den Controller senden
+        self.write_float_to_register(0x00, self.linear_velocity)
+        self.write_float_to_register(0x01, self.steering_angle)
+
+        # Debugg Abfrage, ob auch alles richtig gesendet wurde
+        debugg_angle = self.read_float_from_register(0x01)
+        debugg_velocity = self.read_float_from_register(0x00)
+        self.get_logger().info(f'Updated Velocity: {debugg_velocity:.2f} m/s, Updated Angle: {math.degrees(debugg_angle):.2f} degrees')
+
 
 
 
