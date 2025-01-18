@@ -22,7 +22,7 @@ class I2cInterfaceNode(Node):
         self.steering_angle = 0.0
 
         # Timer zum Senden der Daten an Controller
-        self.timer = self.create_timer(0.1, self.send_update)
+        self.timer = self.create_timer(0.2, self.send_update)
 
         # Abonnieren des /cmd_vel-Themas
         self.subscription = self.create_subscription(
