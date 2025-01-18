@@ -22,7 +22,7 @@ class I2cInterfaceNode(Node):
         self.steering_angle = 0.0
 
         # Timer zum Senden der Daten an Controller
-        self.timer = self.create_timer(0.1, )
+        self.timer = self.create_timer(0.1, self.send_update)
 
         # Abonnieren des /cmd_vel-Themas
         self.subscription = self.create_subscription(
@@ -55,9 +55,6 @@ class I2cInterfaceNode(Node):
         debugg_angle = self.read_float_from_register(0x01)
         debugg_velocity = self.read_float_from_register(0x00)
         self.get_logger().info(f'Updated Velocity: {debugg_velocity:.2f} m/s, Updated Angle: {math.degrees(debugg_angle):.2f} degrees')
-
-
-
 
     def write_float_to_register(self, register:int, value:float)->None:
         float_bytes = list(struct.pack('f', value))
