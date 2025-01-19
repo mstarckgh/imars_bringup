@@ -4,14 +4,17 @@ from geometry_msgs.msg import Twist
 
 import math
 import serial
+import struct
+from time import sleep
 
-class ControllerInterfaceNode(Node):
+
+class SerialInterfaceNode(Node):
     def __init__(self):
-        super().__init__('controller_interface_node')
+        super().__init__('serial_interface_node')
 
         # Parameter des Fahrzeugs
         self.wheelbase = 0.5
-        serial_port = '/dev/ttyUSB1'
+        serial_port = '/dev/ttyUSB0'
         baud_rate = 115200
 
         # Initialisierung der seriellen Verbindung
@@ -49,12 +52,16 @@ class ControllerInterfaceNode(Node):
 
     def send_to_controller(self, velocity, steering_angle):
         try:
-            # Formatierung der Nachricht: "v:<velocity>,a:<steering_angle>\n"
-            message = f'{velocity:.2f},{math.degrees(steering_angle):.2f}\n'
-            self.serial_conn.write(message.encode('utf-8'))
-            self.get_logger().info(f'Sent to controller: {message.strip()}')
+            self.send_float(0x00, velocity)
+            self.send_float(0x01, steering_angle)
+            self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')
+    
+    def send_float(self, register_address:int, value:float):
+        data = [register_address] + list(struct.pack('f', value))
+        self.serial_conn.write(data)
+        sleep(0.02)
         
     def destroy_node(self):
         # Schließen der seriellen Verbindung beim Beenden
@@ -66,7 +73,7 @@ class ControllerInterfaceNode(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    node = ControllerInterfaceNode()
+    node = SerialInterfaceNode()
 
     try:
         rclpy.spin(node)

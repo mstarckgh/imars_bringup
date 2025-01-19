@@ -20,13 +20,13 @@ def generate_launch_description():
         parameters=[joy_params],
     )
 
-    i2c_interface_node = Node(
+    serial_interface_node = Node(
         package='imars_bringup',
-        executable='I2CInterfaceNode',
+        executable='SerialInterfaceNode',
     )
 
     return LaunchDescription([
         joy_node,
         joy_to_cmd_vel_node,
-        i2c_interface_node,
+        serial_interface_node,
     ])
