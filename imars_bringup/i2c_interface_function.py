@@ -21,11 +21,11 @@ class I2cInterfaceNode(Node):
         self.sda_pin = 2
 
         # GPIO-Chip initialisieren
-        self.chip = lgpio.gpiochip_open(0)  # GPIO-Chip 0 auf Raspberry Pi
+        #self.chip = lgpio.gpiochip_open(0)  # GPIO-Chip 0 auf Raspberry Pi
         
         # SCL als Ausgang, SDA als Eingang konfigurieren
-        lgpio.gpio_claim_output(self.chip, self.scl_pin)
-        lgpio.gpio_claim_input(self.chip, self.sda_pin)
+        #lgpio.gpio_claim_output(self.chip, self.scl_pin)
+        #lgpio.gpio_claim_input(self.chip, self.sda_pin)
 
         # Parameter des Fahrzeugs
         self.wheelbase = 0.5
@@ -80,17 +80,17 @@ class I2cInterfaceNode(Node):
 
         # Pulsiere SCL 9-mal
         for _ in range(9):
-            lgpio.gpio_write(self.chip, self.scl_pin, 1)
+            #lgpio.gpio_write(self.chip, self.scl_pin, 1)
             sleep(0.001)
-            lgpio.gpio_write(self.chip, self.scl_pin, 0)
+            #lgpio.gpio_write(self.chip, self.scl_pin, 0)
             sleep(0.001)
             
         # Überprüfe, ob SDA freigegeben ist
-        sda_state = lgpio.gpio_read(self.chip, self.sda_pin)
-        if sda_state == 0:
-            self.get_logger().error("SDA is still held LOW. Manual intervention required.")
-        else:
-            self.get_logger().info("I²C bus successfully reset.")
+        #sda_state = lgpio.gpio_read(self.chip, self.sda_pin)
+        #if sda_state == 0:
+        #    self.get_logger().error("SDA is still held LOW. Manual intervention required.")
+        #else:
+        #    self.get_logger().info("I²C bus successfully reset.")
 
 
     
