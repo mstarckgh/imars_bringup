@@ -64,7 +64,7 @@ class I2cInterfaceNode(Node):
             self.write_float_to_register(0x01, self.steering_angle)
         except Exception as e:
             self.get_logger().error(f"I²C communication error: {e}")
-            self.reset_i2c_bus()
+            #self.reset_i2c_bus()
 
 
     def write_float_to_register(self, register:int, value:float)->None:
