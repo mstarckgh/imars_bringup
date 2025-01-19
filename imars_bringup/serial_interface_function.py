@@ -12,15 +12,15 @@ class SerialInterfaceNode(Node):
     def __init__(self):
         super().__init__('serial_interface_node')
 
-        self.timer = self.create_timer(0.1, self.send_to_controller)
+        self.timer = self.create_timer(0.05, self.send_to_controller)
 
         # Parameter des Fahrzeugs
         self.wheelbase = 0.5
         self.throttle = 0.0
-        self.steering_anle = 0.0
+        self.steering_angle = 0.0
 
         serial_port = '/dev/ttyUSB0'
-        baud_rate = 115200
+        baud_rate = 9600
 
         # Initialisierung der seriellen Verbindung
         try:
@@ -44,7 +44,7 @@ class SerialInterfaceNode(Node):
 
         # Ackermann-Berechnung
         if angular_velocity == 0.0 or self.throttle == 0.0:
-            steering_angle = 0.0
+            self.steering_angle = 0.0
         else:
             turning_radius = self.throttle / angular_velocity
             self.steering_angle = math.atan(self.wheelbase / turning_radius)
@@ -55,7 +55,7 @@ class SerialInterfaceNode(Node):
     def send_to_controller(self):
         try:
             self.send_float(0x00, self.throttle)
-            self.send_float(0x01, self.steering_angle)
+            self.send_float(0x01, math.degrees(self.steering_angle))
             self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')
