@@ -12,8 +12,13 @@ class SerialInterfaceNode(Node):
     def __init__(self):
         super().__init__('serial_interface_node')
 
+        self.timer = self.create_timer(0.1, self.send_to_controller)
+
         # Parameter des Fahrzeugs
         self.wheelbase = 0.5
+        self.throttle = 0.0
+        self.steering_anle = 0.0
+
         serial_port = '/dev/ttyUSB0'
         baud_rate = 115200
 
@@ -34,26 +39,23 @@ class SerialInterfaceNode(Node):
         )
 
     def cmd_vel_callback(self, msg):
-        linear_velocity = msg.linear.x
+        self.throttle = msg.linear.x
         angular_velocity = msg.angular.z
 
         # Ackermann-Berechnung
-        if angular_velocity == 0.0 or linear_velocity == 0.0:
+        if angular_velocity == 0.0 or self.throttle == 0.0:
             steering_angle = 0.0
         else:
-            turning_radius = linear_velocity / angular_velocity
-            steering_angle = math.atan(self.wheelbase / turning_radius)
+            turning_radius = self.throttle / angular_velocity
+            self.steering_angle = math.atan(self.wheelbase / turning_radius)
 
         # Loggen der berechneten Werte
-        self.get_logger().info(f'Linear Velocity: {linear_velocity:.2f} m/s, Steering Angle: {math.degrees(steering_angle):.2f} degrees')
+        self.get_logger().info(f'Linear Velocity: {self.throttle:.2f} m/s, Steering Angle: {math.degrees(self.steering_angle):.2f} degrees')
 
-        # Daten an den Controller senden
-        self.send_to_controller(linear_velocity, steering_angle)
-
-    def send_to_controller(self, velocity, steering_angle):
+    def send_to_controller(self):
         try:
-            self.send_float(0x00, velocity)
-            self.send_float(0x01, steering_angle)
+            self.send_float(0x00, self.throttle)
+            self.send_float(0x01, self.steering_angle)
             self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')
