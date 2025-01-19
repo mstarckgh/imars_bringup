@@ -5,6 +5,8 @@ from geometry_msgs.msg import Twist
 import struct
 import math
 from smbus2 import SMBus
+import lgpio
+from time import sleep
 
 
 
@@ -15,6 +17,15 @@ class I2cInterfaceNode(Node):
         # I2C Server Address
         self.i2c_server_address = 0x08
         self.bus = SMBus(1)
+        self.scl_pin = 3
+        self.sda_pin = 2
+
+        # GPIO-Chip initialisieren
+        self.chip = lgpio.gpiochip_open(0)  # GPIO-Chip 0 auf Raspberry Pi
+        
+        # SCL als Ausgang, SDA als Eingang konfigurieren
+        lgpio.gpio_claim_output(self.chip, self.scl_pin)
+        lgpio.gpio_claim_input(self.chip, self.sda_pin)
 
         # Parameter des Fahrzeugs
         self.wheelbase = 0.5
@@ -48,13 +59,13 @@ class I2cInterfaceNode(Node):
         self.get_logger().info(f'Linear Velocity: {self.linear_velocity:.2f} m/s, Steering Angle: {math.degrees(self.steering_angle):.2f} degrees')
 
         # Daten an den Controller senden
-        self.write_float_to_register(0x00, self.linear_velocity)
-        self.write_float_to_register(0x01, self.steering_angle)
+        try:
+            self.write_float_to_register(0x00, self.linear_velocity)
+            self.write_float_to_register(0x01, self.steering_angle)
+        except Exception as e:
+            self.get_logger().error(f"I²C communication error: {e}")
+            self.reset_i2c_bus()
 
-        # Debugg Abfrage, ob auch alles richtig gesendet wurde
-        debugg_angle = self.read_float_from_register(0x01)
-        debugg_velocity = self.read_float_from_register(0x00)
-        self.get_logger().info(f'Updated Velocity: {debugg_velocity:.2f} m/s, Updated Angle: {math.degrees(debugg_angle):.2f} degrees')
 
     def write_float_to_register(self, register:int, value:float)->None:
         float_bytes = list(struct.pack('f', value))
@@ -62,8 +73,26 @@ class I2cInterfaceNode(Node):
     
     def read_float_from_register(self, register:int)->float:
         float_bytes = self.bus.read_i2c_block_data(self.i2c_server_address, register, 4)
-
         return struct.unpack('f', bytes(float_bytes))[0]
+    
+    def reset_i2c_bus(self):
+        self.get_logger().info("Resetting I²C bus")
+
+        # Pulsiere SCL 9-mal
+        for _ in range(9):
+            lgpio.gpio_write(self.chip, self.scl_pin, 1)
+            sleep(0.001)
+            lgpio.gpio_write(self.chip, self.scl_pin, 0)
+            sleep(0.001)
+            
+        # Überprüfe, ob SDA freigegeben ist
+        sda_state = lgpio.gpio_read(self.chip, self.sda_pin)
+        if sda_state == 0:
+            self.get_logger().error("SDA is still held LOW. Manual intervention required.")
+        else:
+            self.get_logger().info("I²C bus successfully reset.")
+
+
     
 
 def main(args=None):
