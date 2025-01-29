@@ -28,9 +28,9 @@ def generate_launch_description():
             'enable_accel': 'True',
             'enable_sync': 'True',
             'initial_reset': 'True',
-            'pointcloud.enable': 'True',
+            'pointcloud.enable': 'False',
             'rgb_camera.color_profile': '640x360x30',
-            'spatial_filter.enable': 'True',
+            'spatial_filter.enable': 'False',
             'unite_imu_method': '2',
         }.items()
     )
@@ -93,9 +93,9 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(name='gui', default_value='False', description='Flag to enable joint_state_publisher_gui'),
         DeclareLaunchArgument(name='model', default_value=default_model_path, description='Absolute path to robot urdf file'),
+        realsense_launch,
         robot_state_publisher_node,
         joint_state_publisher_node,
-        realsense_launch,
         visual_odometry_node,
         imu_filter_node,
     ])

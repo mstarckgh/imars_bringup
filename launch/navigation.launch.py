@@ -8,7 +8,7 @@ import launch_ros
 import os
 
 def generate_launch_description():
-    # SLAM RTAB-Ma
+    # SLAM RTAB-Map
     parameters=[{
         'frame_id':'base_link',
         'subscribe_depth':True,
@@ -26,7 +26,7 @@ def generate_launch_description():
         package='rtabmap_slam', executable='rtabmap', output='screen',
         parameters=parameters,
         remappings=remappings,
-        arguments=['-d']
+        #arguments=['-d']  Löschte aktuelle Kartendatenbank
     )
 
     return LaunchDescription([

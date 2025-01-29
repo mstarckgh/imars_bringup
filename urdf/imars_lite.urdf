@@ -45,15 +45,6 @@
     </xacro:macro>
 
 
-    <!-- Robot Footprint -->
-    <link name="base_footprint"/>
-
-    <joint name="base_joint" type="fixed">
-        <parent link="base_footprint"/>
-        <child link="base_link"/>
-        <origin xyz="0.0 0.0 ${base_height/2 + wheel_zoff + wheel_radius}" rpy="0 ${-4*pi/180} 0"/>
-    </joint>
-
     <!-- Robot Base -->
     <link name="base_link">
         <visual>
@@ -71,6 +62,16 @@
         </collision>
         <xacro:cylinder_inertia m="5.0" r="${base_radius}" h="${base_height}"/>
     </link>
+
+    <!-- Robot Footprint -->
+    <link name="robot_footprint"></link>
+
+    <joint name="footprint_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="robot_footprint"/>
+        <origin xyz="0.0 0.0 ${-base_height-0.17}" rpy="0 0 0"/>
+    </joint>
+
 
     <!-- Robot Head -->
     <link name="head_link">
@@ -105,7 +106,7 @@
     <joint name="depth_camera_joint" type="fixed">
         <parent link="head_link"/>
         <child link="depth_camera_intermediate_link"/>
-        <origin xyz="${camera_xoff} ${camera_yoff} ${camera_zoff}" rpy="0 ${-0*pi/180} 0"/>        
+        <origin xyz="${camera_xoff} ${camera_yoff} ${camera_zoff}" rpy="0 ${15*pi/180} 0"/>        
     </joint>
 
     <xacro:sensor_d455 parent="depth_camera_intermediate_link" use_nominal_extrinsics="$(arg use_nominal_extrinsics)">
