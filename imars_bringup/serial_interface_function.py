@@ -46,7 +46,7 @@ class SerialInterfaceNode(Node):
         if angular_velocity == 0.0 or self.throttle == 0.0:
             self.steering_angle = 0.0
         else:
-            turning_radius = abs(self.throttle) / angular_velocity
+            turning_radius = self.throttle / angular_velocity
             self.steering_angle = math.atan(self.wheelbase / turning_radius)
 
         # Loggen der berechneten Werte
