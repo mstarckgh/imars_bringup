@@ -120,10 +120,10 @@ controller_server:
       vx_std: 0.2
       vy_std: 0.0
       wz_std: 0.4
-      vx_max: 0.25
-      vx_min: -0.25
+      vx_max: 0.18
+      vx_min: -0.18
       vy_max: 0.0
-      wz_max: 1.9
+      wz_max: 0.4
       ax_max: 3.0
       ax_min: -3.0
       ay_max: 0.0
@@ -141,7 +141,7 @@ controller_server:
         trajectory_step: 5
         time_step: 3
       AckermannConstraints:
-        min_turning_r: 0.4
+        min_turning_r: 0.35
       critics: ["ConstraintCritic", "CostCritic", "GoalCritic", "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic", "PathAngleCritic", "PreferForwardCritic"]
       ConstraintCritic:
         enabled: true

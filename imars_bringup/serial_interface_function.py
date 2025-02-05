@@ -56,12 +56,17 @@ class SerialInterfaceNode(Node):
         try:
             self.send_float(0x00, self.throttle)
             self.send_float(0x01, math.degrees(self.steering_angle))
-            self.get_logger().info(f'Sent to controller')
+            # self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')
     
     def send_float(self, register_address:int, value:float):
-        data = [register_address] + list(struct.pack('f', value))
+        start_byte = 0xAA
+        data_bytes = struct.pack('f', value)
+        checksum = (register_address + sum(data_bytes)) % 256
+        
+        data = bytearray([start_byte, register_address]) + data_bytes + bytearray([checksum, ord('\n')])
+
         self.serial_conn.write(data)
         sleep(0.02)
         

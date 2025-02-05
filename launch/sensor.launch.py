@@ -22,13 +22,13 @@ def generate_launch_description():
             'accel_fps': '200',
             'align_depth.enable': 'True',
             'camera_namespace': '',
-            'depth_module.depth_profile': '640x360x90',
+            'depth_module.depth_profile': '640x360x30',
             'depth_module.emitter_enable': 'True',
             'enable_gyro': 'True',
             'enable_accel': 'True',
             'enable_sync': 'True',
             'initial_reset': 'True',
-            'pointcloud.enable': 'False',
+            'pointcloud.enable': 'True',
             'rgb_camera.color_profile': '640x360x30',
             'spatial_filter.enable': 'False',
             'unite_imu_method': '2',
@@ -89,6 +89,10 @@ def generate_launch_description():
     # Vielleicht noch nodes für Radencoder, Ultraschall und LiDAR-Sensoren erstellen
 
 
+    serial_interface_node = launch_ros.actions.Node(
+        package='imars_bringup',
+        executable='SerialInterfaceNode',
+    )
 
     return LaunchDescription([
         DeclareLaunchArgument(name='gui', default_value='False', description='Flag to enable joint_state_publisher_gui'),
@@ -98,4 +102,5 @@ def generate_launch_description():
         joint_state_publisher_node,
         visual_odometry_node,
         imu_filter_node,
+        serial_interface_node,
     ])
