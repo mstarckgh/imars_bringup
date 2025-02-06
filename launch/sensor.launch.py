@@ -21,7 +21,8 @@ def generate_launch_description():
         launch_arguments={
             'accel_fps': '200',
             'align_depth.enable': 'True',
-            'camera_namespace': '',
+            'camera_namespace': 'imars_lite',
+            'camera_name': 'camera',
             'depth_module.depth_profile': '640x360x30',
             'depth_module.emitter_enable': 'True',
             'enable_gyro': 'True',
@@ -63,10 +64,10 @@ def generate_launch_description():
         'wait_imu_to_init':True}]
 
     remappings=[
-        ('imu', '/imu/data'),
-        ('rgb/image', '/camera/color/image_raw'),
-        ('rgb/camera_info', '/camera/color/camera_info'),
-        ('depth/image', '/camera/aligned_depth_to_color/image_raw')]
+        ('imu', '/imars_lite/imu/data'),
+        ('rgb/image', '/imars_lite/camera/color/image_raw'),
+        ('rgb/camera_info', '/imars_lite/camera/color/camera_info'),
+        ('depth/image', '/imars_lite/camera/aligned_depth_to_color/image_raw')]
     
     # Visual Odometry Node
     visual_odometry_node = launch_ros.actions.Node(
@@ -83,7 +84,9 @@ def generate_launch_description():
         parameters=[{'use_mag': False, 
                      'world_frame':'enu', 
                      'publish_tf':False}],
-        remappings=[('imu/data_raw', '/camera/imu')]
+        remappings=[('imu/data_raw', '/imars_lite/camera/imu'),
+                    ('imu/data', '/imars_lite/imu/data')
+                   ]
     )
 
     # Vielleicht noch nodes für Radencoder, Ultraschall und LiDAR-Sensoren erstellen
