@@ -43,11 +43,20 @@ class SerialInterfaceNode(Node):
         angular_velocity = msg.angular.z
 
         # Ackermann-Berechnung
-        if angular_velocity == 0.0 or self.throttle == 0.0:
-            self.steering_angle = 0.0
+        if self.throttle == 0.0:
+            self.steering_angle = math.pi/2 * angular_velocity
+            if(angular_velocity >= 1.0):
+                self.throttle = 0.1
         else:
-            turning_radius = self.throttle / angular_velocity
-            self.steering_angle = math.atan(self.wheelbase / turning_radius)
+            self.steering_angle = math.atan(self.wheelbase*angular_velocity / self.throttle)
+
+        if self.throttle > 0 and self.throttle < 0.08:
+            self.throttle = 0.08
+        elif self.throttle < 0 and self.throttle > -0.08:
+            self.throttle = -0.08
+
+        
+    
 
         # Loggen der berechneten Werte
         self.get_logger().info(f'Linear Velocity: {self.throttle:.2f} m/s, Steering Angle: {math.degrees(self.steering_angle):.2f} degrees')
