@@ -17,10 +17,10 @@ def generate_launch_description():
         'wait_imu_to_init':True}]
 
     remappings=[
-        ('imu', '/imu/data'),
-        ('rgb/image', '/camera/color/image_raw'),
-        ('rgb/camera_info', '/camera/color/camera_info'),
-        ('depth/image', '/camera/aligned_depth_to_color/image_raw')]
+        ('imu', '/imars_lite/imu/data'),
+        ('rgb/image', '/imars_lite/camera/color/image_raw'),
+        ('rgb/camera_info', '/imars_lite/camera/color/camera_info'),
+        ('depth/image', '/imars_lite/camera/aligned_depth_to_color/image_raw')]
     
     rtabmap_slam_node = launch_ros.actions.Node(
         package='rtabmap_slam', executable='rtabmap', output='screen',
