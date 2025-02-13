@@ -91,6 +91,11 @@ def generate_launch_description():
 
     # Vielleicht noch nodes für Radencoder, Ultraschall und LiDAR-Sensoren erstellen
 
+    twist_to_ackermann_node = launch_ros.actions.Node(
+        package='imars_bringup',
+        executable='TwistToAckermannNode',
+    )
+
 
     serial_interface_node = launch_ros.actions.Node(
         package='imars_bringup',
@@ -105,5 +110,6 @@ def generate_launch_description():
         joint_state_publisher_node,
         visual_odometry_node,
         imu_filter_node,
+        twist_to_ackermann_node,
         serial_interface_node,
     ])

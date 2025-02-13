@@ -20,6 +20,11 @@ def generate_launch_description():
         parameters=[joy_params],
     )
 
+    twist_to_ackermann_node = Node(
+        package='imars_bringup',
+        executable='TwistToAckermannNode',
+    )
+
     serial_interface_node = Node(
         package='imars_bringup',
         executable='SerialInterfaceNode',
@@ -28,5 +33,6 @@ def generate_launch_description():
     return LaunchDescription([
         joy_node,
         joy_to_cmd_vel_node,
+        twist_to_ackermann_node,
         serial_interface_node,
     ])

@@ -29,6 +29,7 @@ setup(
             'JoyToCmdVelNode = imars_bringup.joy_to_cmd_vel_function:main',
             'SerialInterfaceNode = imars_bringup.serial_interface_function:main',
             'I2CInterfaceNode = imars_bringup.i2c_interface_function:main',
+            'TwistToAckermannNode = imars_bringup.twist_to_ackermann_function:main',
         ],
     },
 )

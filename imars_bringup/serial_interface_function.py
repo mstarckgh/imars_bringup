@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float32MultiArray
 
 import math
 import serial
@@ -12,11 +13,8 @@ class SerialInterfaceNode(Node):
     def __init__(self):
         super().__init__('serial_interface_node')
 
-        self.timer = self.create_timer(0.05, self.send_to_controller)
-
-        # Parameter des Fahrzeugs
-        self.wheelbase = 0.5
-        self.throttle = 0.0
+        self.timer = self.create_timer(0.02, self.send_to_controller)
+        self.velocity = 0.0
         self.steering_angle = 0.0
 
         serial_port = '/dev/ttyUSB0'
@@ -30,41 +28,23 @@ class SerialInterfaceNode(Node):
             self.get_logger().error(f'Failed to open serial port: {e}')
             raise
 
-        # Abonnieren des /cmd_vel-Themas
+        # Abonnieren des /imars_lite/ackermann_control - Themas
         self.subscription = self.create_subscription(
-            Twist,
-            '/cmd_vel',
-            self.cmd_vel_callback,
+            Float32MultiArray,
+            '/imars_lite/ackermann_control',
+            self.control_callback,
             10
         )
 
-    def cmd_vel_callback(self, msg):
-        self.throttle = msg.linear.x
-        angular_velocity = msg.angular.z
-
-        # Ackermann-Berechnung
-        if self.throttle == 0.0:
-            self.steering_angle = math.pi/2 * angular_velocity
-            if(angular_velocity >= 1.0):
-                self.throttle = 0.1
-        else:
-            self.steering_angle = math.atan(self.wheelbase*angular_velocity / self.throttle)
-
-        if self.throttle > 0 and self.throttle < 0.08:
-            self.throttle = 0.08
-        elif self.throttle < 0 and self.throttle > -0.08:
-            self.throttle = -0.08
-
-        
-    
-
-        # Loggen der berechneten Werte
-        self.get_logger().info(f'Linear Velocity: {self.throttle:.2f} m/s, Steering Angle: {math.degrees(self.steering_angle):.2f} degrees')
+    def control_callback(self, msg:Float32MultiArray):
+        self.velocity = msg.data[0]
+        self.steering_angle = msg.data[1]
 
     def send_to_controller(self):
         try:
-            self.send_float(0x00, self.throttle)
-            self.send_float(0x01, math.degrees(self.steering_angle))
+            self.send_float(0x00, self.velocity)
+            self.send_float(0x01, self.steering_angle)
+            #self.get_logger().info(f'Send: {self.velocity}, {self.steering_angle}')
             # self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')

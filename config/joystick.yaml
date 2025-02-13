@@ -16,4 +16,4 @@ jtc_node:
     axis_angular:
       yaw: 0
     scale_angular:
-      yaw: 0.5
+      yaw: 2.0
