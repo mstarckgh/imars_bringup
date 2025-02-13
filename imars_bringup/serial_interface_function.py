@@ -37,11 +37,6 @@ class SerialInterfaceNode(Node):
             10
         )
 
-        # Starten des Empfangs-Threads
-        self.receive_thread = Thread(target=self.receive_data)
-        self.receive_thread.daemon = True  # Thread endet, wenn der Hauptthread endet
-        self.receive_thread.start()
-
     def control_callback(self, msg:Float32MultiArray):
         self.cmd_velocity = msg.data[0]
         self.cmd_steering_angle = msg.data[1]
@@ -64,25 +59,6 @@ class SerialInterfaceNode(Node):
 
         self.serial_conn.write(data)
         sleep(0.02)
-
-
-    # ==== Receive Functions ====
-    def receive_data(self):
-        while rclpy.ok():
-            if self.serial_conn.in_waiting > 0:
-                incoming_byte = self.serial_conn.read(1)
-
-                self.get_logger().info(f'got {incoming_byte}')
-
-                if incoming_byte == b'\xAA':
-                    buffer = [0xAA]
-                    buffer.extend(self.serial_conn.read(5))
-                    checksum = self.serial_conn.read(1)
-
-                    self.get_logger().info(f'got {buffer}')
-
-
-
     
         
     def destroy_node(self):
