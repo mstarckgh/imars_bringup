@@ -4,7 +4,7 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32MultiArray  # Alternativ: ein Array für Geschwindigkeit und Lenkwinkel
 
 
-from math import atan, pi, degrees
+from math import atan, atan2, pi, degrees
 
 
 class TwistToAckermannNode(Node):
@@ -30,7 +30,7 @@ class TwistToAckermannNode(Node):
         )
 
     def cmd_vel_callback(self, msg:Twist):
-        effective_velocity = msg.linear.x - msg.angular.z*self.reference_offset
+        effective_velocity = msg.linear.x - abs(msg.angular.z)*self.reference_offset
         if msg.linear.x != 0:
             self.velocity = effective_velocity
             self.steering_angle = atan(msg.angular.z * self.wheelbase / effective_velocity)
