@@ -7,6 +7,7 @@ import math
 import serial
 import struct
 from time import sleep
+from threading import Thread
 
 
 class SerialInterfaceNode(Node):
@@ -14,8 +15,8 @@ class SerialInterfaceNode(Node):
         super().__init__('serial_interface_node')
 
         self.timer = self.create_timer(0.02, self.send_to_controller)
-        self.velocity = 0.0
-        self.steering_angle = 0.0
+        self.cmd_velocity = 0.0
+        self.cmd_steering_angle = 0.0
 
         serial_port = '/dev/ttyUSB0'
         baud_rate = 9600
@@ -36,16 +37,21 @@ class SerialInterfaceNode(Node):
             10
         )
 
+        # Starten des Empfangs-Threads
+        self.receive_thread = Thread(target=self.receive_data)
+        self.receive_thread.daemon = True  # Thread endet, wenn der Hauptthread endet
+        self.receive_thread.start()
+
     def control_callback(self, msg:Float32MultiArray):
-        self.velocity = msg.data[0]
-        self.steering_angle = msg.data[1]
+        self.cmd_velocity = msg.data[0]
+        self.cmd_steering_angle = msg.data[1]
 
     def send_to_controller(self):
         try:
-            self.send_float(0x00, self.velocity)
-            self.send_float(0x01, self.steering_angle)
+            self.send_float(0x00, self.cmd_velocity)
+            self.send_float(0x01, self.cmd_steering_angle)
             #self.get_logger().info(f'Send: {self.velocity}, {self.steering_angle}')
-            # self.get_logger().info(f'Sent to controller')
+            #self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')
     
@@ -58,6 +64,26 @@ class SerialInterfaceNode(Node):
 
         self.serial_conn.write(data)
         sleep(0.02)
+
+
+    # ==== Receive Functions ====
+    def receive_data(self):
+        while rclpy.ok():
+            if self.serial_conn.in_waiting > 0:
+                incoming_byte = self.serial_conn.read(1)
+
+                self.get_logger().info(f'got {incoming_byte}')
+
+                if incoming_byte == b'\xAA':
+                    buffer = [0xAA]
+                    buffer.extend(self.serial_conn.read(5))
+                    checksum = self.serial_conn.read(1)
+
+                    self.get_logger().info(f'got {buffer}')
+
+
+
+    
         
     def destroy_node(self):
         # Schließen der seriellen Verbindung beim Beenden

@@ -7,7 +7,7 @@
 
     <xacro:property name="camera_xoff" value="${base_radius - 0.05}"/>
     <xacro:property name="camera_yoff" value="0.0"/>
-    <xacro:property name="camera_zoff" value="0.05"/>
+    <xacro:property name="camera_zoff" value="${base_height/2 - 0.05}"/>
 
     <xacro:property name="leg_length" value="0.610"/>
     <xacro:property name="leg_width" value="0.030"/>
@@ -104,7 +104,7 @@
     <link name="depth_camera_intermediate_link"/>
 
     <joint name="depth_camera_joint" type="fixed">
-        <parent link="head_link"/>
+        <parent link="base_link"/>
         <child link="depth_camera_intermediate_link"/>
         <origin xyz="${camera_xoff} ${camera_yoff} ${camera_zoff}" rpy="0 ${15*pi/180} 0"/>        
     </joint>
