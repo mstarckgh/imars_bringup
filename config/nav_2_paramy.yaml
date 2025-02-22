@@ -67,7 +67,7 @@ bt_navigator:
 
 controller_server:
   ros__parameters:
-    controller_frequency: 30.0
+    controller_frequency: 20.0
     costmap_update_timeout: 0.30
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
@@ -88,8 +88,8 @@ controller_server:
       yaw_goal_tolerance: 0.5
     FollowPath:
       plugin: "nav2_mppi_controller::MPPIController"
-      time_steps: 112
-      model_dt: 0.1
+      time_steps: 200
+      model_dt: 0.2
       batch_size: 2000
       ax_max: 3.0
       ax_min: -3.0
@@ -101,11 +101,11 @@ controller_server:
       vx_max: 0.5
       vx_min: -0.35
       vy_max: 0.5
-      wz_max: 2.0
+      wz_max: 1.9
       iteration_count: 1
       prune_distance: 1.4
       transform_tolerance: 0.1
-      temperature: 0.3
+      temperature: 1.0
       gamma: 0.015
       motion_model: "Ackermann"
       visualize: true
@@ -114,7 +114,7 @@ controller_server:
         trajectory_step: 5
         time_step: 3
       AckermannConstraints:
-        min_turning_r: 0.3
+        min_turning_r: 0.4
       critics: [
         "ConstraintCritic", "CostCritic", "GoalCritic",
         "GoalAngleCritic", "PathAlignCritic", "PathFollowCritic",
@@ -150,7 +150,7 @@ controller_server:
       PathAlignCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 14.0
+        cost_weight: 5.0
         max_path_occupancy_ratio: 0.05
         trajectory_point_step: 4
         threshold_to_consider: 0.5
@@ -159,7 +159,7 @@ controller_server:
       PathFollowCritic:
         enabled: true
         cost_power: 1
-        cost_weight: 50.0
+        cost_weight: 5.0
         offset_from_furthest: 5
         threshold_to_consider: 1.4
       PathAngleCritic:
