@@ -13,7 +13,7 @@ class TwistToAckermannNode(Node):
 
         # Parameter des Fahrzeugs
         self.wheelbase = 0.4
-        self.reference_offset = 0.10
+        self.reference_offset = 0.0
         self.velocity = 0.0
         self.steering_angle = 0.0 
 
@@ -36,7 +36,7 @@ class TwistToAckermannNode(Node):
             self.steering_angle = atan(msg.angular.z * self.wheelbase / effective_velocity)
         elif msg.linear.x == 0 and msg.angular.z == 1:
             self.steering_angle = pi/2 + 0.03
-            self.velocity = 0.08
+            self.velocity = 0.2
         else:
             self.velocity = 0.0
             self.steering_angle = 0.0
