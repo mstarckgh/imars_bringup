@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32MultiArray  # Alternativ: ein Array für Geschwindigkeit und Lenkwinkel
 
 
@@ -12,33 +13,48 @@ class TwistToAckermannNode(Node):
         super().__init__('twist_to_ackermann_node')
 
         # Parameter des Fahrzeugs
-        self.wheelbase = 0.4
-        self.reference_offset = 0.0
-        self.velocity = 0.0
-        self.steering_angle = 0.0 
+        self.wheelbase = 0.41
+        self.wheelbase_front = 0.124
+        self.wheelbase_rear = 0.286
+        self.weight = 25
+        self.c_alpha = 300
+        
+        self.target_velocity = 0.0
+        self.target_steering_angle = 0.0
+
+        self.vx = 0
+        self.vy = 0
+        self.wz = 0
 
         # Publisher für Geschwindigkeit und Lenkwinkel
         self.publisher = self.create_publisher(Float32MultiArray, '/imars_lite/ackermann_control', 10)
 
 
         # Abonnieren des /cmd_vel-Themas
-        self.subscription = self.create_subscription(
+        self.cmd_subscription = self.create_subscription(
             Twist,
             '/cmd_vel',
             self.cmd_vel_callback,
             10
         )
 
+        self.odom_subscription = self.create_subscription(
+            Odometry,
+            '/odom',
+            self.odom_callback,
+            10
+        )
+
     def cmd_vel_callback(self, msg:Twist):
-        effective_velocity = msg.linear.x - abs(msg.angular.z)*self.reference_offset
-        if msg.linear.x != 0:
-            self.velocity = effective_velocity
-            self.steering_angle = atan(msg.angular.z * self.wheelbase / effective_velocity)
+        if msg.angular.z != 0:
+            self.velocity = msg.linear.x
+            rho = msg.linear.x / msg.angular.z
+            self.steering_angle = self.wheelbase/rho + self.weight/self.wheelbase * (self.wheelbase_rear/self.c_alpha - self.wheelbase_front/self.c_alpha) * (msg.linear.x**2)/rho
         elif msg.linear.x == 0 and msg.angular.z == 1:
             self.steering_angle = pi/2 + 0.03
             self.velocity = 0.2
         else:
-            self.velocity = 0.0
+            self.velocity = msg.linear.x
             self.steering_angle = 0.0
 
         # Erstellen der Nachricht
@@ -47,6 +63,11 @@ class TwistToAckermannNode(Node):
 
         # Veröffentlichen der Nachricht
         self.publisher.publish(control_msg)
+
+    def odom_callback(self, msg:Odometry):
+        self.vx = msg.twist.twist.linear.x
+        self.vy = msg.twist.twist.linear.y
+        self.wz = msg.twist.twist.angular.z
 
 
 def main(args=None):
