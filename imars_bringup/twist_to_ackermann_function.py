@@ -45,8 +45,8 @@ class TwistToAckermannNode(Node):
             self.steering_angle = self.wheelbase / rho
             #v =  sqrt(self.vx**2 + self.vy**2)
             #self.steering_angle = self.wheelbase/rho + self.weight/self.wheelbase * (self.wheelbase_rear/self.c_alpha - self.wheelbase_front/self.c_alpha) * (v**2)/rho
-            if self.steering_angle > pi/2:
-                self.steering_angle = pi/2
+            if self.steering_angle > pi/4:
+                self.steering_angle = pi/4
             elif self.steering_angle < -pi/2:
                 self.steering_angle = -pi/2
         elif msg.linear.x == 0 and msg.angular.z == 1:
