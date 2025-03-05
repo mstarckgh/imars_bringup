@@ -26,7 +26,7 @@ def generate_launch_description():
         package='rtabmap_slam', executable='rtabmap', output='screen',
         parameters=parameters,
         remappings=remappings,
-        #arguments=['-d']
+        arguments=['-d']
     )
 
     return LaunchDescription([
