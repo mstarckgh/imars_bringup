@@ -8,13 +8,19 @@ import launch_ros
 import os
 
 def generate_launch_description():
-    # SLAM RTAB-Ma
+    # SLAM RTAB-Map
+
     parameters=[{
         'frame_id':'base_link',
         'subscribe_depth':True,
         'subscribe_odom_info':True,
         'approx_sync':False,
-        'wait_imu_to_init':True}]
+        'wait_imu_to_init':True,
+
+        # Wenn kein Mapping
+        #'Mem/IncrementalMemory': 'false',
+        #'Mem/InitWMWithAllNodes': 'true'
+    }]
 
     remappings=[
         ('imu', '/imars_lite/imu/data'),
@@ -30,5 +36,5 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        rtabmap_slam_node
+        rtabmap_slam_node,
     ])

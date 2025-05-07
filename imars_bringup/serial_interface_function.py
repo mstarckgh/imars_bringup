@@ -19,7 +19,7 @@ class SerialInterfaceNode(Node):
         self.cmd_steering_angle = 0.0
 
         serial_port = '/dev/ttyUSB0'
-        baud_rate = 9600
+        baud_rate = 115200
 
         # Initialisierung der seriellen Verbindung
         try:
@@ -45,7 +45,7 @@ class SerialInterfaceNode(Node):
         try:
             self.send_float(0x00, self.cmd_velocity)
             self.send_float(0x01, self.cmd_steering_angle)
-            #self.get_logger().info(f'Send: {self.velocity}, {self.steering_angle}')
+            #self.get_logger().info(f'Send: {self.cmd_velocity}, {self.cmd_steering_angle}')
             #self.get_logger().info(f'Sent to controller')
         except serial.SerialException as e:
             self.get_logger().error(f'Failed to send data to controller: {e}')
