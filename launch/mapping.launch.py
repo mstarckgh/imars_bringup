@@ -18,7 +18,7 @@ def generate_launch_description():
         'wait_imu_to_init':True,
 
         # Wenn kein Mapping
-        #'Mem/IncrementalMemory': 'false',
+        'Mem/IncrementalMemory': 'false',
         #'Mem/InitWMWithAllNodes': 'true'
     }]
 
@@ -32,7 +32,7 @@ def generate_launch_description():
         package='rtabmap_slam', executable='rtabmap', output='screen',
         parameters=parameters,
         remappings=remappings,
-        arguments=['-d']
+        #arguments=['-d']
     )
 
     return LaunchDescription([

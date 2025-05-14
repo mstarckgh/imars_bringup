@@ -11,6 +11,7 @@ def generate_launch_description():
     sensor_launch = os.path.join(pkg_share, 'launch', 'sensor.launch.py')
     mapping_launch = os.path.join(pkg_share, 'launch', 'mapping.launch.py')
     navigation_launch = os.path.join(pkg_share, 'launch', 'navigation.launch.py')
+    joy_launch = os.path.join(pkg_share, 'launch', 'joy.launch.py')
 
     return LaunchDescription([
         IncludeLaunchDescription(
