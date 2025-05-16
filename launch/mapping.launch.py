@@ -11,15 +11,11 @@ def generate_launch_description():
     # SLAM RTAB-Map
 
     parameters=[{
-        'frame_id':'base_link',
-        'subscribe_depth':True,
-        'subscribe_odom_info':True,
-        'approx_sync':False,
-        'wait_imu_to_init':True,
-
-        # Wenn kein Mapping
-        'Mem/IncrementalMemory': 'false',
-        #'Mem/InitWMWithAllNodes': 'true'
+        'frame_id': 'base_link',
+        'subscribe_depth': True,
+        'subscribe_odom_info': True,
+        'approx_sync': False,  # Bei synchronisierten Topics False setzen
+        'wait_imu_to_init': True,
     }]
 
     remappings=[
@@ -32,7 +28,7 @@ def generate_launch_description():
         package='rtabmap_slam', executable='rtabmap', output='screen',
         parameters=parameters,
         remappings=remappings,
-        #arguments=['-d']
+        arguments=['-d']
     )
 
     return LaunchDescription([
