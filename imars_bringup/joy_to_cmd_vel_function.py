@@ -2,6 +2,9 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float32MultiArray  # Alternativ: ein Array für Geschwindigkeit und Lenkwinkel
+
+from math import degrees
 
 class JoyToCmdVelNode(Node):
     def __init__(self):
@@ -25,7 +28,7 @@ class JoyToCmdVelNode(Node):
 
         # /joy Subscriber und /cmd_vel Publisher
         self.subscription = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
-        self.publisher = self.create_publisher(Twist, '/cmd_vel', 10)
+        self.publisher = self.create_publisher(Float32MultiArray, '/imars_lite/ackermann_control', 10)
 
     def joy_callback(self, msg):
         twist = Twist()
@@ -35,12 +38,14 @@ class JoyToCmdVelNode(Node):
         linear_input_x_bw = 0.5*msg.axes[self.axis_linear_x_bw] - 0.5    # Trigger für rückwärtsfahren auf [-1.0; 0.0] trimmen
         linear_input_x = linear_input_x_fw + linear_input_x_bw
 
-        twist.linear.x = (linear_input_x * self.scale_linear_x) + self.offset_linear_x
+        velocity = (linear_input_x * self.scale_linear_x) + self.offset_linear_x
 
         # Achse für Drehgeschwindigkeit
-        twist.angular.z = msg.axes[self.axis_angular_yaw] * self.scale_angular_yaw
+        steering_angle = msg.axes[self.axis_angular_yaw] * self.scale_angular_yaw
 
-        self.publisher.publish(twist)
+        control_msg = Float32MultiArray()
+        control_msg.data = [velocity, degrees(steering_angle)]
+        self.publisher.publish(control_msg)
 
 def main(args=None):
     rclpy.init(args=args)
