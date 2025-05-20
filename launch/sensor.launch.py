@@ -59,15 +59,22 @@ def generate_launch_description():
     parameters=[{
         'frame_id':'base_link',
         'subscribe_depth':True,
+        'subscribe_rgb':True,
+        'subscribe_imu':True,
         'subscribe_odom_info':True,
         'approx_sync':False,
-        'wait_imu_to_init':True}]
+        'wait_imu_to_init':True,
+        'publish_tf': True,
+        'Reg/Force3DoF': 'true',
+    }]
 
     remappings=[
         ('imu', '/imars_lite/imu/data'),
         ('rgb/image', '/imars_lite/camera/color/image_raw'),
         ('rgb/camera_info', '/imars_lite/camera/color/camera_info'),
-        ('depth/image', '/imars_lite/camera/aligned_depth_to_color/image_raw')]
+        ('depth/image', '/imars_lite/camera/aligned_depth_to_color/image_raw'),
+        #('odom', '/imars_lite/odom/rtabmap')
+    ]
     
     # Visual Odometry Node
     visual_odometry_node = launch_ros.actions.Node(
@@ -110,6 +117,6 @@ def generate_launch_description():
         joint_state_publisher_node,
         visual_odometry_node,
         imu_filter_node,
-        twist_to_ackermann_node,
-        serial_interface_node,
+        #twist_to_ackermann_node,
+        #serial_interface_node,
     ])

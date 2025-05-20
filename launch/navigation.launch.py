@@ -250,6 +250,19 @@ def generate_launch_description():
         ],
     )
 
+
+    # some custom nodes
+    twist_to_ackermann_node = Node(
+        package='imars_bringup',
+        executable='TwistToAckermannNode',
+    )
+
+
+    serial_interface_node = Node(
+        package='imars_bringup',
+        executable='SerialInterfaceNode',
+    )
+
     # Create the launch description and populate
     ld = LaunchDescription()
 

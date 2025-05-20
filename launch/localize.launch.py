@@ -17,14 +17,7 @@ def generate_launch_description():
                 'subscribe_rgbd': False,
                 'Mem/IncrementalMemory': 'false',
                 'Mem/InitWMWithAllNodes': 'true',
-                'Rtabmap/StartNewMap': 'false',
-                'Rtabmap/PublishStats': 'true',
-                'Rtabmap/PublishLastSignature': 'true',
-                'Rtabmap/DetectionRate': '1.0',
-                'RGBD/NeighborLinkRefining': 'false',
-                'RGBD/OptimizeFromGraphEnd': 'false',
-                'RGBD/ProximityBySpace': 'false',
-                'Vis/MinInliers': '15',
+                'Vis/MinInliers': '10',
                 'database_path': '/home/matthias/.ros/rtabmap.db'
             }],
             remappings=[
